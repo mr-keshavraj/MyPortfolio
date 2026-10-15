@@ -68,10 +68,18 @@ export default function ContactForm() {
       form.reset();
       setMessageLength(0);
       setStatus({ kind: "sent" });
-    } catch {
+    } catch (err) {
+      // EmailJS rejects with { status, text } (e.g. 403 "domain not allowed"); network/blocker failures throw an Error.
+      const reason =
+        err && typeof err === "object" && "text" in err
+          ? `${(err as { status?: number }).status ?? ""} ${(err as { text?: string }).text ?? ""}`.trim()
+          : err instanceof Error
+            ? err.message
+            : "network error";
+      console.error("Contact form: EmailJS send failed:", err);
       setStatus({
         kind: "error",
-        message: `Your message couldn't be sent. Please try again, or email ${profile.email}.`,
+        message: `Your message couldn't be sent (${reason}). Please try again, or email ${profile.email}.`,
       });
     }
   }
