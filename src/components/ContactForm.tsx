@@ -28,8 +28,13 @@ export default function ContactForm() {
     const form = e.currentTarget;
     const data = new FormData(form);
 
-    // Honeypot: real users never see or fill this field.
-    if (String(data.get("company") ?? "").trim()) return;
+    // Honeypot: hidden from people. Its name deliberately matches no autofill
+    // category (a field called "company" got filled by Chrome address autofill
+    // and silently blocked real submissions).
+    if (String(data.get("hp_field") ?? "").trim()) {
+      setStatus({ kind: "sent" });
+      return;
+    }
 
     const name = String(data.get("name") ?? "").trim();
     const email = String(data.get("email") ?? "").trim();
@@ -158,8 +163,8 @@ export default function ContactForm() {
 
       {/* Honeypot, hidden from people and assistive tech */}
       <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor="cf-company">Company</label>
-        <input id="cf-company" name="company" tabIndex={-1} autoComplete="off" />
+        <label htmlFor="cf-hp">Leave this empty</label>
+        <input id="cf-hp" name="hp_field" type="text" tabIndex={-1} autoComplete="off" data-1p-ignore data-lpignore="true" />
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
