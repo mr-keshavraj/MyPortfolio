@@ -1,158 +1,110 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { MenuIcon } from "lucide-react";
-
-const navLinks = [
-  { name: "Home", href: "#home" },
-  { name: "Education", href: "#education" },
-  { name: "Skills", href: "#skills" },
-  { name: "Projects", href: "#projects" },
-  { name: "Experience", href: "#experience" },
-  { name: "Contact", href: "#contact" },
-];
+import { useEffect, useState } from "react";
+import { Menu } from "lucide-react";
+import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import ThemeToggle from "@/components/ThemeToggle";
+import { navLinks, profile } from "@/data/profile";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState<string>("");
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 50);
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
 
-      // Update active section based on scroll position
-      const sections = document.querySelectorAll("section[id]");
-      sections.forEach((section) => {
-        const sectionTop = (section as HTMLElement).offsetTop - 100;
-        const sectionHeight = (section as HTMLElement).offsetHeight;
-        if (
-          scrollPosition >= sectionTop &&
-          scrollPosition < sectionTop + sectionHeight
-        ) {
-          setActiveSection(section.id);
+    // Highlight the nav item for the section currently in the middle of the viewport.
+    const sections = navLinks
+      .map((l) => document.querySelector<HTMLElement>(l.href))
+      .filter((el): el is HTMLElement => el !== null);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActive(`#${entry.target.id}`);
         }
-      });
-    };
+      },
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    sections.forEach((s) => observer.observe(s));
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
   }, []);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 py-3 shadow-lg shadow-primary/5"
-          : "py-5"
-      }`}
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300",
+        scrolled ? "border-border bg-background/85 backdrop-blur-md" : "border-transparent",
+      )}
     >
-      <div className="container flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold gradient-text">Keshav Raj</span>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <motion.div key={link.name}>
-              <Link
-                href={link.href}
-                className={`relative text-sm font-medium transition-all duration-300 ${
-                  activeSection === link.href.replace("#", "")
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-primary"
-                }`}
-              >
-                {link.name}
-                {activeSection === link.href.replace("#", "") && (
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-purple-400 rounded-full"
-                    layoutId="activeSection"
-                    initial={{ opacity: 0, scaleX: 0 }}
-                    animate={{ opacity: 1, scaleX: 1 }}
-                    exit={{ opacity: 0, scaleX: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </Link>
-            </motion.div>
-          ))}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+      <div className="container flex h-16 items-center justify-between">
+        <a href="#top" className="group flex items-center gap-2.5 font-semibold tracking-tight">
+          <span
+            aria-hidden
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/50 font-mono text-xs font-bold text-primary"
           >
-            <Button 
-              asChild
-              className="bg-gradient-to-r from-primary to-purple-600 hover:from-purple-600 hover:to-primary transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25"
+            KR
+          </span>
+          <span>{profile.name}</span>
+        </a>
+
+        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              aria-current={active === link.href ? "true" : undefined}
+              className={cn(
+                "rounded-md px-3 py-2 text-sm transition-colors hover:text-foreground",
+                active === link.href ? "text-foreground" : "text-muted-foreground",
+              )}
             >
-              <a href="#contact">Contact Me</a>
-            </Button>
-          </motion.div>
+              {link.label}
+            </a>
+          ))}
+          <div className="ml-2">
+            <ThemeToggle />
+          </div>
         </nav>
 
-        {/* Mobile Navigation */}
-        <div className="md:hidden">
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
           <Sheet>
-            <SheetTrigger asChild>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Button variant="ghost" size="icon" className="relative">
-                  <MenuIcon className="h-6 w-6" />
-                </Button>
-              </motion.div>
+            <SheetTrigger
+              aria-label="Open menu"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-foreground"
+            >
+              <Menu className="h-5 w-5" />
             </SheetTrigger>
-            <SheetContent className="w-[250px] sm:w-[300px] bg-background/95 backdrop-blur-xl border-border/50">
-              <nav className="flex flex-col gap-4 mt-8">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Link
+            <SheetContent side="right" className="w-72 border-border bg-background">
+              <SheetTitle className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                Menu
+              </SheetTitle>
+              <nav aria-label="Mobile" className="mt-6 flex flex-col">
+                {navLinks.map((link) => (
+                  <SheetClose asChild key={link.href}>
+                    <a
                       href={link.href}
-                      className={`relative text-base font-medium transition-all duration-300 ${
-                        activeSection === link.href.replace("#", "")
-                          ? "text-primary"
-                          : "text-muted-foreground hover:text-primary"
-                      }`}
+                      className="border-b border-border py-3 text-lg text-foreground transition-colors hover:text-primary"
                     >
-                      {link.name}
-                      {activeSection === link.href.replace("#", "") && (
-                        <motion.div
-                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-purple-400 rounded-full"
-                          initial={{ opacity: 0, scaleX: 0 }}
-                          animate={{ opacity: 1, scaleX: 1 }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      )}
-                    </Link>
-                  </motion.div>
+                      {link.label}
+                    </a>
+                  </SheetClose>
                 ))}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="mt-4"
-                >
-                  <Button 
-                    className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-purple-600 hover:to-primary transition-all duration-300 shadow-lg" 
-                    asChild
-                  >
-                    <a href="#contact">Contact Me</a>
-                  </Button>
-                </motion.div>
               </nav>
+              <a
+                href={profile.resume}
+                download="Keshav_Raj_Resume.pdf"
+                className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+              >
+                Download résumé
+              </a>
             </SheetContent>
           </Sheet>
         </div>

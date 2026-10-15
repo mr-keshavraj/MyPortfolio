@@ -1,23 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  distDir: 'out',
+  // Fully static site: works on Vercel and any static host.
+  output: "export",
+  distDir: "out",
   images: {
-    // For static exports, we need unoptimized: true
-    // To enable optimization, deploy with a server (Vercel, etc.)
+    // Static export has no image optimization server; local images are pre-sized.
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'keshav-raj.web.app',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'ext.same-assets.com',
-        pathname: '**',
-      },
-    ],
   },
 };
 

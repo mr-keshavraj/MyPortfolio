@@ -1,206 +1,64 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { BriefcaseIcon, CalendarIcon } from "lucide-react";
-
-type ExperienceItem = {
-  title: string;
-  company: string;
-  period: string;
-  description: string[];
-};
-
-const experienceData: ExperienceItem[] = [
-  {
-    title: "Full Stack Developer",
-    company: "QuantiqueMinds Pvt. Ltd.",
-    period: "October 2025 - Present",
-    description: [
-      "Developing scalable web applications using Next.js for frontend and Golang for backend. Building RESTful APIs, implementing server-side rendering, optimizing database queries with MongoDB, and deploying containerized applications using Docker.",
-      "Working on microservices architecture and implementing authentication mechanisms. Leveraging Next.js features including App Router, Server Components, and API routes to create high-performance, SEO-optimized applications while maintaining robust backend services with Golang."
-    ]
-  },
-  {
-    title: "Full Stack Developer",
-    company: "Kenshi Labs Consultancy Pvt. Ltd",
-    period: "2024",
-    description: [
-      "Completed a three-month full-stack development internship at Kenshi Labs in 2024",
-      "As a Full Stack Developer at Kenshi Labs, I worked on building scalable and efficient backend systems using Golang and MongoDB. I contributed to designing and implementing RESTful APIs, optimizing database queries, and integrating authentication mechanisms like Keycloak for secure access management. My role also involved working with Docker for containerized deployments and leveraging middleware in Golang to enhance application performance. Additionally, I gained hands-on experience in microservices architecture, improving system modularity and scalability. Through this experience, I strengthened my problem-solving skills and deepened my expertise in full-stack development."
-    ]
-  },
-  {
-    "title": "Software Development Intern",
-    "company": "Roman Technologies",
-    "period": "2024",
-    "description": [
-      "Completed a three-month software development internship at Roman Technologies in 2024.",
-      "As a Software Development Intern, I gained hands-on experience in software engineering principles and programming languages such as Golang, Python, Java, and C++. I worked on developing scalable applications, writing clean and efficient code, and understanding the fundamentals of backend and frontend development.",
-      "During my internship, I collaborated on projects involving RESTful API development, database management, and debugging applications to enhance performance. I also explored software development best practices, improving my problem-solving skills and deepening my understanding of full-stack development."
-    ]
-  },
-  {
-    title: "Web Developer",
-    company: "BRIFLY MEDIA PVT. LTD",
-    period: "2023",
-    description: [
-      "Completed a one-month front-end development internship at Brifly Media in 2023, creating and optimizing user-friendly websites with HTML and CSS.",
-      "Collaborated with senior developers, enhanced UX with interactive elements, and received praise for high-quality work, attention to detail, and teamwork within tight deadlines."
-    ]
-  },
-  {
-    title: "Design & Content team",
-    company: "Software Development Club (SDC, MVJCE)",
-    period: "2022",
-    description: [
-      "Demonstrated mastery in harnessing design tools like Figma and Canva to craft visually stunning assets collaborative projects. Applied Canva and Figma skills to develop compelling designs, ensuring alignment with project requirements and objectives.",
-      "Researched, meticulously crafted, and polished captivating articles for the Software Development Club magazine, resulting in a substantial increase in readership and a boost in club membership."
-    ]
-  }
-];
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
-};
-
-const itemVariant = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
+import SectionHeading from "@/components/SectionHeading";
+import { experience } from "@/data/profile";
+import { cn } from "@/lib/utils";
 
 export default function Experience() {
   return (
-    <section id="experience" className="bg-secondary/50 py-20">
+    <section id="experience" aria-labelledby="experience-title" className="scroll-mt-20 border-t border-border py-20 md:py-24">
       <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center text-center mb-16"
-        >
-          <Badge variant="outline" className="mb-4 px-4 py-1 text-sm border-primary/30 text-primary">
-            Experience
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Professional Journey</h2>
-          <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
-            A look at my professional experiences and roles that have shaped my career in web development and design.
-          </p>
-        </motion.div>
+        <SectionHeading
+          id="experience-title"
+          eyebrow="Experience"
+          title="Where I've worked"
+          description="Backend-focused roles building HR, payments and marketplace systems in Go."
+        />
 
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="relative max-w-4xl mx-auto"
-        >
-          {/* Animated Timeline line */}
-          <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2">
-            <motion.div
-              className="w-0.5 bg-gradient-to-b from-primary via-purple-500 to-blue-500 rounded-full"
-              initial={{ height: 0 }}
-              whileInView={{ height: "100%" }}
-              viewport={{ once: true }}
-              transition={{ duration: 2, ease: "easeInOut" }}
-            />
-          </div>
-
-          {experienceData.map((experience, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariant}
-              className={`flex flex-col md:flex-row gap-8 mb-12 relative ${
-                index % 2 === 0 ? "md:flex-row-reverse" : ""
-              }`}
-            >
-              {/* Animated Timeline dot */}
-              <motion.div 
-                className="absolute left-2.5 md:left-1/2 transform md:-translate-x-2 mt-1.5"
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 + 0.5, duration: 0.5 }}
-              >
-                <div className="w-4 h-4 rounded-full bg-gradient-to-br from-primary to-purple-500 shadow-lg shadow-primary/50 relative">
-                  <motion.div
-                    className="absolute inset-0 rounded-full bg-primary/30"
-                    animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.5, 0, 0.5],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  />
-                </div>
-              </motion.div>
-
-              {/* Content */}
-              <div className={`pl-12 md:pl-0 md:w-1/2 ${index % 2 === 0 ? "md:text-left md:pr-12" : "md:pl-12"}`}>
-                <motion.div
-                  whileHover={{ 
-                    scale: 1.02, 
-                    y: -5,
-                    transition: { duration: 0.3 }
-                  }}
-                  className="h-full"
-                >
-                  <Card className="h-full overflow-hidden border-gradient-to-r from-primary/20 via-purple-500/20 to-blue-500/20 bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl hover:border-primary/50 transition-all duration-500 shadow-xl hover:shadow-2xl hover:shadow-primary/10 relative group">
-                    {/* Glow effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg" />
-                    <CardContent className="p-6 relative z-10">
-                      <div className="flex flex-col gap-2">
-                        <div className={`flex items-center gap-2 mb-1 ${index % 2 === 0 ? "md:justify-center" : ""}`}>
-                          <div className="p-2 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20">
-                            <BriefcaseIcon className="w-4 h-4 text-primary" />
-                          </div>
-                          <h3 className="text-xl font-semibold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">{experience.title}</h3>
-                        </div>
-
-                        <div className={`flex items-center gap-2 mb-3 ${index % 2 === 0 ? "md:justify-center" : ""}`}>
-                          <p className="text-foreground/80 font-medium">{experience.company}</p>
-                        </div>
-
-                        <div className={`flex items-center gap-2 mb-4 text-sm text-muted-foreground ${index % 2 === 0 ? "md:justify-end" : ""}`}>
-                          <div className="p-1 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
-                            <CalendarIcon className="w-3.5 h-3.5 text-blue-400" />
-                          </div>
-                          <span className="font-medium">{experience.period}</span>
-                        </div>
-
-                        <div className="space-y-3">
-                          {experience.description.map((paragraph, i) => (
-                            <motion.p 
-                              key={i} 
-                              className="text-sm text-foreground/80 leading-relaxed"
-                              initial={{ opacity: 0, y: 10 }}
-                              whileInView={{ opacity: 1, y: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ delay: i * 0.1 }}
-                            >
-                              {paragraph}
-                            </motion.p>
-                          ))}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </div>
-            </motion.div>
+        <ol className="relative space-y-6 border-l border-border pl-6 sm:pl-8">
+          {experience.map((job) => (
+            <li key={job.company} className="relative">
+              <span
+                aria-hidden
+                className={cn(
+                  "absolute -left-[calc(1.5rem+5px)] top-6 h-2.5 w-2.5 rounded-full border-2 sm:-left-[calc(2rem+5px)]",
+                  job.current ? "border-primary bg-primary" : "border-border bg-background",
+                )}
+              />
+              <article className="card-surface p-5 transition-colors hover:border-primary/40 sm:p-6">
+                <header className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold">{job.role}</h3>
+                    <p className="text-muted-foreground">{job.company}</p>
+                  </div>
+                  <p className="shrink-0 font-mono text-xs text-muted-foreground">
+                    {job.current && (
+                      <span className="mr-2 rounded bg-primary/15 px-1.5 py-0.5 text-primary">Current</span>
+                    )}
+                    {job.period}
+                  </p>
+                </header>
+                {job.points.length > 0 && (
+                  <ul className="mt-4 space-y-2 text-sm leading-relaxed text-muted-foreground">
+                    {job.points.map((point) => (
+                      <li key={point} className="flex gap-3">
+                        <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {job.stack.length > 0 && (
+                  <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Technologies">
+                    {job.stack.map((s) => (
+                      <li key={s} className="chip">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </article>
+            </li>
           ))}
-        </motion.div>
+        </ol>
       </div>
     </section>
   );
